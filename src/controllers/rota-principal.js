@@ -1,10 +1,19 @@
+module.exports = (app) => {
 
-function rotaGetPrincipal(app){
+    app.get('/', (req, res) => {
+    res.send('Olá Mundo!')
+    })
 
-    return app.get('/', (req, res) => {
-        res.send('Olá Mundo!')
-    });
 }
 
 
-module.exports = rotaGetPrincipal
+
+// function rotaGetPrincipal(app){
+
+//     return app.get('/', (req, res) => {
+//         res.send('Olá Mundo!')
+//     });
+// }
+
+
+// module.exports = rotaGetPrincipal
