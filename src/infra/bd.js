@@ -1,7 +1,7 @@
 const bd = {
 
     users:[],
-    tarefa:[],
+    tarefa:[]
 }
 
 module.exports = bd

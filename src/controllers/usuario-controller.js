@@ -1,56 +1,84 @@
 const User = require("../models/userModel")
+const UserDAO = require("../DAO/userDAO")
 
 module.exports = (app, bd) => {
 
+    let userBanco = new UserDAO(bd)
+
     app.get('/usuario', (req, res) => {
-    res.json({
-        res:bd.users,
-        count:bd.users.length
+       userBanco.getAllUsers()
+       .then((rows) =>{
+           res.json({
+               result:rows,
+               count:rows.length
+           })
+       })
+       .catch((err) => {
+           res.json({err})
+       })
+    })
+    app.get('/usuario/:id', (req, res) =>{
+        let id = req.params.id
+        userBanco.getUserById(id)
+        .then((rows) =>{
+            res.json({
+                Result:rows,
+                Count:rows.length
+            })
+        })
+        .catch((err) =>{
+            res.json({err})
         })
     })
-
-    app.get('/usuario/:email', (req, res) =>{
-
-        let arrayResposta = bd.users.filter((element) => {
-            return element.email === req.params.email
-        })
-        res.json({
-            result:arrayResposta,
-            count: arrayResposta.length
-        })
-    })
-
     app.post('/usuario',(req,res)=>{
-
         const {nome,email,senha} = req.body
-
         let newUser =  new User(nome,email,senha)
-        bd.users.push(newUser)
-        res.json({
-            message:'Usuario criado com sucesso',
-            error:false
+        userBanco.insertUser(newUser)
+        .then(()=>{
+            res.json({
+                message:'Usuario inserido com sucesso',
+                error: false
+            })
+        })
+        .catch((err)=>{
+            console.log(err)
+            res.json({
+                message:'Erro inserido com sucesso',
+                error: true
+            })
+        })
+    })
+    app.delete('/usuario/:id', (req, res) =>{
+        const id = req.params.id
+        userBanco.deleteUser(id)
+        .then(() =>{
+            res.json({
+                Message: "Usuario deletado com sucesso"
+            })
+        })
+        .catch((err) =>{
+            res.json({err})
+        })
+    })
+    app.put('/usuario/:id', (req, res) =>{
+        const id = req.params.id
+        const {nome, email, senha} = req.body
+        userBanco.updateUser(nome, email, senha, id)
+        .then((rows) =>{
+            res.json({
+                Message:"Alteração realizada com sucesso",
+                Result:rows
+            })
+        })
+        .catch((err) =>{
+            res.json({err})
         })
     })
     
-    app.delete('/usuario/:email',(req,res)=>{
-        let countArray = bd.users.length
-        bd.users = bd.users.filter((element) => {
-            return element.email !== req.params.email
-        })
-        if(countArray === bd.users.length ){
-            res.json({
-                message:`não existe usuario com esse email ${req.params.email}`,
-                error: true
-            })
-        }
-        else{
-            res.json({
-                message:`Usuario com o email: ${req.params.email} deletado com sucesso`,
-                error: false
-            })
-        }
-    })
+    
+    
 
+    
 }
 
 
