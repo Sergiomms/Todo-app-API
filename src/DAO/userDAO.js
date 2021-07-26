@@ -30,6 +30,24 @@ class UserDAO{
             })
         })
     }
+    rodaMissao(missao){
+        return new Promise((resolve, reject) =>{
+            let str = missao
+            let separa = str.split("")
+            let mapa = Object.create(null)
+    
+            for(const item of separa){
+                if(mapa[item]){
+                    mapa[item] += 1
+                }else{
+                mapa[item] = 1
+                }
+            }
+            resolve(mapa)
+            reject(err)
+        })   
+
+    }
     insertUser(usuario){
 
         return new Promise((resolve, reject) =>{

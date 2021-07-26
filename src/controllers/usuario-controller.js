@@ -5,30 +5,51 @@ module.exports = (app, bd) => {
 
     let userBanco = new UserDAO(bd)
 
-    app.get('/usuario', (req, res) => {
-       userBanco.getAllUsers()
-       .then((rows) =>{
-           res.json({
-               result:rows,
-               count:rows.length
-           })
-       })
-       .catch((err) => {
-           res.json({err})
-       })
-    })
-    app.get('/usuario/:id', (req, res) =>{
-        let id = req.params.id
-        userBanco.getUserById(id)
-        .then((rows) =>{
+    app.get('/usuario', async (req, res) => {
+        try{
+            let resposta = await userBanco.getAllUsers()
             res.json({
-                Result:rows,
-                Count:rows.length
+                message:"Sucesso",
+                Result: resposta,
+                Count:resposta.length
             })
-        })
-        .catch((err) =>{
-            res.json({err})
-        })
+        }
+        catch(err){
+            res.json({
+               message: "Erro ao mostrar usuários",
+               Erro: err.message
+            })
+        }
+    })
+    app.get('/usuario/:id', async(req, res) =>{
+        let id = req.params.id
+        try{
+            if(parseInt(id) != NaN){
+                let resposta = await userBanco.getUserById(id)
+                if(resposta.length > 0){
+                    res.json({
+                        Result:resposta
+                    })
+                }else{
+                    throw new Error ("Nenhum usuario encontrado")
+                }
+            }else{
+                throw new Error("É esperado um ID do tipo INT, tente novamente")
+            }
+        }
+        catch(Error){
+            res.json({Erro: Error.message})
+        }
+        // userBanco.getUserById(id)
+        // .then((rows) =>{
+        //     res.json({
+        //         Result:rows,
+        //         Count:rows.length
+        //     })
+        // })
+        // .catch((err) =>{
+        //     res.json({err})
+        // })
     })
     app.post('/usuario',(req,res)=>{
         const {nome,email,senha} = req.body

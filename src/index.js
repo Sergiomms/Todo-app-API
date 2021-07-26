@@ -1,7 +1,7 @@
 //Import Express
 const express = require('express')
 const app = express()
-const port = 3091
+
 const cors = require('cors')
 //Import rotas
 const rotaPrincipal = require('./controllers/rota-principal')
@@ -16,6 +16,7 @@ const bd = require('./infra/sqlite-db')
 
 app.use(express.json()) //Tbm pode ser com body-parser (baixar com npm i body-parser e chamar com uma const bodyParser = require('body-parser')
 app.use(cors())
+
 // const testeUser = new User('Sergio', 'sergio@email.com', '123456')
 // const testeTarefa = new Tarefa('tarefaTeste', 'descriçãoTesteTarefa', 'Iniciado', '12/07/2021')
 // const testeUser2 = new User('teste', 'sergio@email.com', '123456')
@@ -26,7 +27,5 @@ rotaPrincipal(app);
 rotaUser(app, bd);
 rotaTarefa(app,bd);
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-});
+module.exports = app
 
